@@ -11,7 +11,7 @@ class KMeansFasterHandler(sc: SparkContext, path: String, partitions: Int = 1) e
 
   def initialize(): Unit = {
     val lines = KMeansHelper.track(s"Reading data from $path", {
-      sc.textFile(path = path, minPartitions = partitions)
+      sc.textFile(path = path)
     })
 
     val inputs = KMeansHelper.track("Preparing data (split, conversion, index)", {
@@ -59,10 +59,14 @@ class KMeansFasterHandler(sc: SparkContext, path: String, partitions: Int = 1) e
     while (!clusteringDone) {
       KMeansHelper.logTitle(s"Step $number_of_steps")
 
-      //Assign points to clusters
-      val joined = data.cartesian(currentCentroids) //((0,Array(5.1, 3.5, 1.4, 0.2)),(1,Array(4.8, 3.1, 1.6, 0.2)))
+      //Assign points to centroids
+      var joined = data.cartesian(currentCentroids) //((0,Array(5.1, 3.5, 1.4, 0.2)),(1,Array(4.8, 3.1, 1.6, 0.2)))
       KMeansHelper.logRDD("joined", joined)
       KMeansHelper.log(s"joined partitions: ${joined.getNumPartitions}")
+
+      //Reduce number of partitions
+      joined = joined.coalesce(numPartitions = partitions) //((0,Array(5.1, 3.5, 1.4, 0.2)),(1,Array(4.8, 3.1, 1.6, 0.2)))
+      KMeansHelper.log(s"joined partitions after coalesce(): ${joined.getNumPartitions}")
 
       //We compute the distance between the points and each cluster
       // Append also the data point to the distance list to avoid the later join()
