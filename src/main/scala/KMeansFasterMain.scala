@@ -11,7 +11,7 @@ object KMeansFasterMain {
 
     // important from spark 2.0 to run the job on the cluster
     val sparkSession = SparkSession.builder()
-      .appName(s"KMeansScala${scala.util.Random.nextInt()}")
+      .appName(s"KMeans_Scala_Klouvi_Riva${scala.util.Random.nextInt()}")
       //.master("local")
       .getOrCreate()
 

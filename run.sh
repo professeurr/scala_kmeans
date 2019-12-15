@@ -17,6 +17,6 @@ spark-submit\
 hdfs dfs -cat $output/part-00000
 
 #--conf spark.yarn.jars="file:///home/cluster/shared/spark/jars/*.jar" \
-#./run.sh kmeans_scala_klouvi_riva_2.11-1.0.jar hdfs:///user/user159/iris.data.txt hdfs:///user/user159/kmeans_output
+#./run.sh kmeans_scala_klouvi_riva_2.11-1.0.jar hdfs:///user/user159/iris.data.txt
 
 #hdfs dfs -cat $3/log/part-00000

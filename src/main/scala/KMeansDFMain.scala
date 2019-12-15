@@ -3,8 +3,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object KMeansDFMain {
 
-  KMeansHelper.Log = true
-  KMeansHelper.Debug = false
+  //KMeansHelper.Log = true
+  //KMeansHelper.Debug = false
 
   // important from spark 2.0 to run the job on the cluster
   private val sparkSession = SparkSession.builder()
