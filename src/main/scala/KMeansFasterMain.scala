@@ -1,13 +1,13 @@
+import java.io.{FileOutputStream, PrintStream}
+import java.util.concurrent.TimeUnit
+
 import org.apache.spark.sql.SparkSession
 
 object KMeansFasterMain {
 
-  KMeansHelper.Log = true
-  KMeansHelper.Debug = false
-
   def main(args: Array[String]): Unit = {
 
-    //System.setOut(new PrintStream(new FileOutputStream("log.out.txt")))
+    System.setOut(new PrintStream(new FileOutputStream("log.out.txt")))
 
     // important from spark 2.0 to run the job on the cluster
     val sparkSession = SparkSession.builder()
@@ -23,6 +23,8 @@ object KMeansFasterMain {
     val maxSteps = 100
     val seed = 42
 
+    val t0 = System.nanoTime()
+
     val engine: KMeansFasterHandler = new KMeansFasterHandler(sparkSession.sparkContext, path, maxPartitions)
     engine.initialize()
 
@@ -33,22 +35,24 @@ object KMeansFasterMain {
     })
 
     val clustering = KMeansHelper.track("Building cluster", {
-      KMeansHelper.logTitle(s"Building cluster with ${engine.getClass.getName}")
       engine.build(centroids, maxSteps)
     })
 
+    val duration =  TimeUnit.SECONDS.convert(System.nanoTime() - t0, TimeUnit.NANOSECONDS)
     val outputPath = s"${args(0)}/../kmeans_output"
-    KMeansHelper.track(s"Saving the clustering result into $outputPath", {
-      clustering._1.sortBy(x => x._2._1._1).coalesce(1).saveAsTextFile(outputPath)
-    })
+    val metricsPath = s"${args(0)}/../kmeans_metrics"
+
+    val metrics = sparkSession.sparkContext.parallelize(KMeansHelper.LogBuffer)
 
     KMeansHelper.logRDD("clusters", clustering._1)
+    KMeansHelper.log(s"output path: $outputPath")
+    KMeansHelper.log(s"metrics path: $metricsPath")
     KMeansHelper.log(s"error: ${clustering._2}")
     KMeansHelper.log(s"number_of_steps: ${clustering._3}")
+    KMeansHelper.log(s"duration: $duration s")
+    clustering._1.sortBy(x => x._2._1._1).coalesce(1).saveAsTextFile(outputPath)
+    metrics.coalesce(1).saveAsTextFile(metricsPath)
 
-    /*sparkSession.sparkContext.textFile(path = "log.out.txt", 1)
-      .saveAsTextFile(s"${args(1)}/log")
-*/
     sparkSession.close()
   }
 }

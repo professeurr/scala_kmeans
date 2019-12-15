@@ -3,13 +3,16 @@ import java.util.concurrent.TimeUnit
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.udf
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.math.sqrt
 import scala.runtime.ScalaRunTime.stringOf
 
 object KMeansHelper extends Serializable {
 
-  var Debug = false
+  def log : Logger = LoggerFactory.getLogger( KMeansHelper.getClass )
+
+  var LogBuffer: Array[String] = Array()
 
   def computeDistance(x: Array[Double], y: Array[Double]): Double = {
     sqrt((for (z <- x.zip(y)) yield (z._1 - z._2) * (z._1 - z._2)).sum)
@@ -36,20 +39,21 @@ object KMeansHelper extends Serializable {
   }
 
   def logRDD[T](label: String, data: RDD[T]): Unit = {
-    if (Debug)
-      println(s"$label: ${stringOf(data.collect())}")
+    log.debug(s"$label: ${stringOf(data.collect())}")
+    if(log.isDebugEnabled)
+      {
+        println(s"$label: ${stringOf(data.collect())}")
+        log(s"$label: ${stringOf(data.collect())}")
+      }
   }
 
-  var Log = false
-
   def log(x: String): Unit = {
-    if (Log)
-      println(x)
+    log.info(x)
+    LogBuffer = LogBuffer :+ x
   }
 
   def logTitle(x: String): Unit = {
-    if (Log)
-      println(s"============== $x ============== ")
+    log(s"============== $x ============== ")
   }
 
   def track[R](label: String, block: => R): R = {

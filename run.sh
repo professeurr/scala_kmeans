@@ -1,7 +1,10 @@
 #!/bin/bash
 
-output=$2/../kmeans_output
-hdfs dfs -rm -f -r $output
+clustering_output=$2/../kmeans_output
+clustering_metrics=$2/../kmeans_metrics
+
+hdfs dfs -rm -f -r $clustering_output
+hdfs dfs -rm -f -r $clustering_metrics
 
 spark-submit\
   --master yarn --deploy-mode cluster \
@@ -14,7 +17,11 @@ spark-submit\
   --conf spark.yarn.jars="file:///home/cluster/shared/spark/jars/*.jar" \
   $1 $2
 
-hdfs dfs -cat $output/part-00000
+echo "=============== Clustering data ============"
+hdfs dfs -cat $clustering_output/part-00000
+
+echo "=============== Metrics ===================="
+hdfs dfs -cat $clustering_metrics/part-00000
 
 #--conf spark.yarn.jars="file:///home/cluster/shared/spark/jars/*.jar" \
 #./run.sh kmeans_scala_klouvi_riva_2.11-1.0.jar hdfs:///user/user159/iris.data.txt

@@ -3,9 +3,6 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object KMeansDarioMain {
 
-  KMeansHelper.Log = true
-  KMeansHelper.Debug = false
-
   private val conf = new SparkConf().setAppName("KMeansScala").setMaster("local")
   val sc = new SparkContext(conf)
   sc.setLogLevel("ERROR")
