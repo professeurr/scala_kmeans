@@ -1,2 +1,11 @@
 *.class
 *.log
+/.idea/modules/
+/.idea/libraries/
+/project/target/
+/project/project/target/config-classes/
+/target/
+/.idea/
+/log.out.txt
+/project/build.properties
+/project/plugins.sbt
