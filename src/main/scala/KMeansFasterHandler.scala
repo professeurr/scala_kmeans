@@ -17,11 +17,9 @@ class KMeansFasterHandler(sc: SparkContext, path: String, partitions: Int = 1) e
     val inputs = KMeansHelper.track("Preparing data (split, conversion, index)", {
       val d = lines.map(x => {
         val y = x.split(',')
-        (y.take(4).map(KMeansHelper.toDouble), y.last)
+        (y.dropRight(1).map(KMeansHelper.toDouble), y.last)
       }).zipWithIndex() //zipWithIndex allows us to give a specific index to each point
 
-      //REMOVED: move this additional map action to the above one so we reduce the shuffle
-      //.map(x => ((x._2, x._1.take(4).map(KMeansHelper.toDouble)), (x._2, x._1.last))) //swap the index and the array positions
       KMeansHelper.log(s"Number of data: ${d.count}")
       KMeansHelper.log(s"data partitions: ${d.getNumPartitions}")
       d
