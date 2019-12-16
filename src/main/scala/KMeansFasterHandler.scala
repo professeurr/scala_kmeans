@@ -63,7 +63,7 @@ class KMeansFasterHandler(sc: SparkContext, path: String, partitions: Int = 1) e
       KMeansHelper.log(s"joined partitions: ${joined.getNumPartitions}")
 
       //Reduce number of partitions
-      joined = joined.coalesce(numPartitions = partitions) //((0,Array(5.1, 3.5, 1.4, 0.2)),(1,Array(4.8, 3.1, 1.6, 0.2)))
+      joined = joined.coalesce(numPartitions = partitions)
       KMeansHelper.log(s"joined partitions after coalesce(): ${joined.getNumPartitions}")
 
       //We compute the distance between the points and each cluster
