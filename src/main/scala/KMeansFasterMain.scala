@@ -17,30 +17,31 @@ object KMeansFasterMain {
 
     //Iris data path is passed a first argument
     val path = args(0) //"hdfs:///user/user159/iris.data.txt"
-
     val maxPartitions = 1// Runtime.getRuntime().availableProcessors() - 1
     val nbClusters = 3
     val maxSteps = 100
     val seed = 42
-
     val t0 = System.nanoTime()
 
     val engine: KMeansFasterHandler = new KMeansFasterHandler(sparkSession.sparkContext, path, maxPartitions)
     engine.initialize()
 
+    // Get the cluster initial centroids
     val centroids = KMeansHelper.track("Getting the initial centroids", {
       val c = engine.getCentroids(nbClusters, seed).persist()
       KMeansHelper.logRDD("centroids", c)
       c
     })
 
+    // Build the cluster
     val clustering = KMeansHelper.track("Building cluster", {
       engine.build(centroids, maxSteps)
     })
 
+    // Format the output data points and metrics
     val duration =  TimeUnit.SECONDS.convert(System.nanoTime() - t0, TimeUnit.NANOSECONDS)
-    val outputPath = s"${args(0)}/../kmeans_output"
-    val metricsPath = s"${args(0)}/../kmeans_metrics"
+    val outputPath = s"${args(0)}/../kmeans_scala_output"
+    val metricsPath = s"${args(0)}/../kmeans_scala_metrics"
 
     KMeansHelper.logRDD("clusters", clustering._1)
     KMeansHelper.log(s"output path: $outputPath")
@@ -53,6 +54,7 @@ object KMeansFasterMain {
     val metrics = sparkSession.sparkContext.parallelize(KMeansHelper.LogBuffer)
     metrics.coalesce(1).saveAsTextFile(metricsPath)
 
+    // Close spark session, release resources
     sparkSession.close()
   }
 }
