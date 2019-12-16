@@ -1,6 +1,6 @@
 #!/bin/bash
 
-clustering_output=$2/../kmeans_output
+clustering_output=$2/../kmeans_cluster
 clustering_metrics=$2/../kmeans_metrics
 
 hdfs dfs -rm -f -r $clustering_output

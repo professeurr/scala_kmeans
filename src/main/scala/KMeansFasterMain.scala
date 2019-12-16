@@ -40,11 +40,11 @@ object KMeansFasterMain {
 
     // Format the output data points and metrics
     val duration =  TimeUnit.SECONDS.convert(System.nanoTime() - t0, TimeUnit.NANOSECONDS)
-    val outputPath = s"${args(0)}/../kmeans_scala_output"
+    val outputPath = s"${args(0)}/../kmeans_scala_cluster"
     val metricsPath = s"${args(0)}/../kmeans_scala_metrics"
 
     KMeansHelper.logRDD("clusters", clustering._1)
-    KMeansHelper.log(s"output path: $outputPath")
+    KMeansHelper.log(s"clusters path: $outputPath")
     KMeansHelper.log(s"metrics path: $metricsPath")
     KMeansHelper.log(s"error: ${clustering._2}")
     KMeansHelper.log(s"number_of_steps: ${clustering._3}")
