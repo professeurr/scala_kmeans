@@ -35,20 +35,22 @@ class KMeansFasterHandler(sc: SparkContext, path: String, partitions: Int = 1) e
     KMeansHelper.logRDD("labels", labels)
   }
 
-  def getCentroids(nbClusters: Int, seed: Long): RDD[(Long, Array[Double])] = {
-    // Select initial centroids
-    sc.parallelize(data.takeSample(withReplacement = false, nbClusters, seed = seed))
-      .zipWithIndex()
-      .map(x => (x._2, x._1._2))
-  }
-
-  def build(centroids: RDD[(Long, Array[Double])], maxSteps: Int): (RDD[(Long, ((Long, Double), (Double, Double, Double, Double, String)))], Double, Int) = {
+  def build(maxSteps: Int, seed: Int): (RDD[(Long, ((Long, Double), (Double, Double, Double, Double, String)))], Double, Int) = {
     var clusteringDone = false
     var number_of_steps = 1
     var error: Double = 0.0
     var prev_assignment: RDD[(Long, ((Long, Double), Array[Double]))] = null
     var assignment: RDD[(Long, ((Long, Double), Array[Double]))] = null
-    var currentCentroids = centroids
+
+    // Compute the size of clusters
+    val clusters = labels.map(x => (x._2, x._1)).reduceByKey((_, _) => 1).count()
+    KMeansHelper.log(s"Number of clusters: $clusters")
+
+    // Select initial centroids
+    var currentCentroids = sc.parallelize(data.takeSample(withReplacement = false, clusters.toInt, seed = seed))
+      .zipWithIndex()
+      .map(x => (x._2, x._1._2))
+    KMeansHelper.logRDD("centroids", currentCentroids)
 
     //A broadcast value is sent to and saved by each executor for further use
     //instead of being sent to each executor when needed.

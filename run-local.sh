@@ -1,7 +1,7 @@
 #!/bin/bash
 
-clustering_output=$2/../kmeans_cluster
-clustering_metrics=$2/../kmeans_metrics
+clustering_output=$2/../kmeans_scala_cluster
+clustering_metrics=$2/../kmeans_scala_metrics
 
 hdfs dfs -rm -f -r $clustering_output
 hdfs dfs -rm -f -r $clustering_metrics
@@ -11,7 +11,7 @@ spark-submit\
   --executor-cores 1 \
   --num-executors 1 \
   --executor-memory 1g \
-  --conf spark.yarn.executor.memoryOverhead=1g \
+  --conf spark.executor.memoryOverhead=1g \
   --conf spark.driver.memory=1g \
   --conf spark.driver.cores=1 \
   $1 $2

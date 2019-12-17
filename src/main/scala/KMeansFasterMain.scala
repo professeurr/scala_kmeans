@@ -26,16 +26,9 @@ object KMeansFasterMain {
     val engine: KMeansFasterHandler = new KMeansFasterHandler(sparkSession.sparkContext, path, maxPartitions)
     engine.initialize()
 
-    // Get the cluster initial centroids
-    val centroids = KMeansHelper.track("Getting the initial centroids", {
-      val c = engine.getCentroids(nbClusters, seed).persist()
-      KMeansHelper.logRDD("centroids", c)
-      c
-    })
-
     // Build the cluster
     val clustering = KMeansHelper.track("Building cluster", {
-      engine.build(centroids, maxSteps)
+      engine.build(maxSteps, seed)
     })
 
     // Format the output data points and metrics
