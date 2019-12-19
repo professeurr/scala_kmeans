@@ -33,7 +33,7 @@ object KMeansKlouviRiva {
   /** *****************************
    * Read csv data from the given path
    *
-   * @param path: the data path
+   * @param path : the data path
    */
   def readData(path: String): Unit = {
     val lines = track(s"Reading data from $path", {
@@ -65,10 +65,10 @@ object KMeansKlouviRiva {
   /** ***************************
    * This function reads the data from the given @path and build the cluster
    *
-   * @param path: path
-   * @param maxSteps: number of steps
-   * @param partitions: used to control the RDD partition over the cluster
-   * @param seed: the random generator seed
+   * @param path       : path
+   * @param maxSteps   : number of steps
+   * @param partitions : used to control the RDD partition over the cluster
+   * @param seed       : the random generator seed
    * @return
    */
   def buildCluster(path: String, maxSteps: Int, partitions: Int, seed: Int): (RDD[(Long, ((Long, Double), (Double, Double, Double, Double, String)))], Double, Int) = {
@@ -160,7 +160,7 @@ object KMeansKlouviRiva {
   /** *****************************
    * The main function to run the program
    *
-   * @param args: list of the arguments provided to the application
+   * @param args : list of the arguments provided to the application
    */
   def main(args: Array[String]): Unit = {
 
