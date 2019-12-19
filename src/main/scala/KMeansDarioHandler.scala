@@ -52,7 +52,7 @@ class KMeansDarioHandler(sc: SparkContext, path: String)  extends Serializable {
       //Assign points to clusters
       //print('centroids: {}    '.format(centroids.getNumPartitions())    )
       val joined = data.cartesian(centroidsCluster)
-      KMeansHelper.logRDD("joined", joined) //((1,Array(4.9, 3.0, 1.4, 0.2, Iris-setosa)),(0,Array(5.4, 3.9, 1.7, 0.4)))
+      KMeansHelper.logRDD("joined", joined) //( (1, Array(4.9, 3.0, 1.4, 0.2, Iris-setosa)),(0,Array(5.4, 3.9, 1.7, 0.4)))
       KMeansHelper.log(s"joined partitions: ${joined.getNumPartitions}")
 
       //We compute the distance between the points and each cluster
