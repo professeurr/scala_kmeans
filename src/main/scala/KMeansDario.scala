@@ -100,7 +100,7 @@ object KMeansDario {
       logRDD("min_dist", min_dist) //((19,(2,2.7294688127912363))
       log(s"min_dist partitions: ${min_dist.getNumPartitions}")
 
-      //assignment will be our      return value: It contains the datapoint      ,
+      //assignment will be our return value: tt contains the datapoints,
       //the id of the closest cluster and the distance of the point to the centroid
       assignment = min_dist.join(data)
       logRDD("assignment", assignment) //(19,((2,2.7294688127912363),Array(5.1, 3.8, 1.5, 0.3, Iris-setosa)))
